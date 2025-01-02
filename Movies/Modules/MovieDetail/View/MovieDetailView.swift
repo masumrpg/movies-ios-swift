@@ -26,9 +26,20 @@ struct MovieDetailView: View {
             ZStack {
                 GeometryReader { geometry in
                     VStack {
-                        if isPlaying {
-                            TrailerView(videoId: trailerInteractor.trailer?.results.first?.key ?? "", autoplay: true)
-                                .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+                        if isPlaying || interactor.videoIdFromImdb.isEmpty {
+                            if interactor.videoIdFromImdb.isEmpty {
+                                ZStack {
+                                      Color.black
+                                                                .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+                                                            ProgressView()
+                                                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                                                .scaleEffect(1.5)
+                                                        }
+                                                    } else {
+                                                        // Show video only when videoId is available
+                                                        TrailerView(videoId: interactor.videoIdFromImdb, autoplay: true)
+                                                            .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+                                                    }
                         } else {
                             ZStack {
                                 if let movieDetail = interactor.movieDetail {
@@ -107,13 +118,6 @@ struct MovieDetailView: View {
                                                 .font(.title3)
                                                 .fontWeight(.bold)
                                             Spacer()
-                                            Button(action: {
-                                                // Action for "See All"
-                                            }) {
-                                                Text("See All")
-                                                    .font(.caption)
-                                                    .foregroundColor(.blue)
-                                            }
                                         }
                                         Text(interactor.movieDetail?.overview ?? "No description available.")
                                             .lineLimit(4)
@@ -129,19 +133,31 @@ struct MovieDetailView: View {
                                                 .font(.title3)
                                                 .fontWeight(.bold)
                                             Spacer()
-                                            Button(action: {
-                                                // Action for "See All"
-                                            }) {
-                                                Text("See All")
-                                                    .font(.caption)
-                                                    .foregroundColor(.blue)
-                                            }
                                         }
                                         ScrollView(.horizontal, showsIndicators: false) {
-                                            LazyHStack(spacing: 15) {
+                                            LazyHStack(spacing: 5) {
                                                 ForEach(interactor.castProfiles) { cast in
                                                     CastView(cast: cast)
                                                         .frame(width: 120)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    Divider()
+                                    
+                                    // Reviews
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        HStack {
+                                            Text("Reviews")
+                                                .font(.title3)
+                                                .fontWeight(.bold)
+                                            Spacer()
+                                        }
+                                        ScrollView(.vertical, showsIndicators: false) {
+                                            LazyVStack(spacing: 15) {
+                                                ForEach(0...10, id: \.self) { test in
+                                                    Text("\(test)")
                                                 }
                                             }
                                         }
@@ -153,7 +169,7 @@ struct MovieDetailView: View {
                                         .fill(Color.white)
                                         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
                                 )
-                                .padding(.horizontal)
+                                .padding(.horizontal, 5)
                             }
                             .onAppear {
                                 interactor.loadMovieDetail(movieId: movieId)
@@ -161,7 +177,6 @@ struct MovieDetailView: View {
                             }
                             .navigationTitle("Movie Detail")
                             .navigationBarTitleDisplayMode(.inline)
-                            .background(Color(UIColor.systemGroupedBackground).edgesIgnoringSafeArea(.all))
                         }
                         
                         
@@ -183,6 +198,7 @@ struct MovieDetailView: View {
                 .task {
                     await interactor.movieCredits(for: interactor.movieDetail?.id ?? 28)
                     await interactor.loadCastProfiles()
+                    await interactor.fetchIMDbVideoID(imdbID: interactor.movieDetail?.imdbId ?? "")
                 }
             }
         }

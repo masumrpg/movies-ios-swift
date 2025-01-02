@@ -21,9 +21,11 @@ struct TrailerView: UIViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
         let autoplayParam = autoplay ? "1" : "0"
-        guard let url = URL(string: "https://www.youtube.com/embed/\(videoId)?autoplay=\(autoplayParam)") else {
+        
+        guard let url = URL(string: "https://www.imdb.com/video/embed/\(videoId)/?autoplay=\(autoplayParam)&width=1020") else {
             return
         }
+        
         let request = URLRequest(url: url)
         uiView.load(request)
     }
