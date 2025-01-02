@@ -11,10 +11,12 @@ struct MovieDetailModule {
     static func build(movieId: Int) -> some View {
         let apiClient = APIClient()
         let interactor = MoviesDetailInteractor(baseUrl: apiClient.getBaseUrl(), apiKey: apiClient.getApiKey())
+        let trailerInteractor = TrailerInteractor(baseUrl: apiClient.getBaseUrl(), apiKey: apiClient.getApiKey())
         
-        return MovieDetailView(interactor: interactor, movieId: movieId)
+        return MovieDetailView(interactor: interactor, movieId: movieId, trailerInteractor: trailerInteractor)
     }
 }
+
 
 struct MovieDetailModule_Previews: PreviewProvider {
     static var previews: some View {
