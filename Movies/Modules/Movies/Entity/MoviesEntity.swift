@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Movie: Identifiable, Decodable {
-    let adult: Bool
+struct Movie: Identifiable, Decodable, Equatable {
     let id: Int
+    let adult: Bool
     let poster_path: String?
     let title: String
     let overview: String
@@ -32,8 +32,9 @@ struct Movie: Identifiable, Decodable {
     }
 
     static var preview: Movie {
-        return Movie(adult: false,
-                     id: 23834,
+        return Movie(
+                    id: 23834,
+                    adult: false,
                      poster_path: "https://image.tmdb.org/t/p/w300",
                      title: "Free Guy",
                      overview: "some demo text here",
@@ -42,9 +43,16 @@ struct Movie: Identifiable, Decodable {
     }
 }
 
-struct MoviesPageResponse: Decodable {
+struct MoviesPage: Decodable {
     let page: Int
     let results: [Movie]
-    let total_pages: Int
-    let total_results: Int
+    let totalPages: Int
+    let totalResults: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case page
+        case results
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
+    }
 }

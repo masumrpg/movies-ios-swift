@@ -114,7 +114,6 @@
 		8E0FBFEE2D2472B5008A004A /* MovieDetail */ = {
 			isa = PBXGroup;
 			children = (
-				8EA11F9C2D250EB900ADD31C /* Presenter */,
 				8E0FBFF52D247677008A004A /* View */,
 				8E0FBFF22D247343008A004A /* Interactor */,
 				8E0FBFEF2D2472C4008A004A /* Entity */,
@@ -185,13 +184,6 @@
 				8E89C5C12D2434820091602E /* GenresEntity.swift */,
 			);
 			path = Entity;
-			sourceTree = "<group>";
-		};
-		8EA11F9C2D250EB900ADD31C /* Presenter */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Presenter;
 			sourceTree = "<group>";
 		};
 		8EA33DD72D23C74A00DE29D0 = {

@@ -21,8 +21,14 @@ struct MoviesCardView: View {
                     .scaledToFill()
                     .frame(width: 340, height: 240)
             } placeholder: {
-                Rectangle().fill(Color("GrayToWhite"))
-                        .frame(width: 340, height: 240)
+                ZStack {
+                        Rectangle()
+                            .fill(Color("GrayToWhite"))
+                            .frame(height: 240)
+                            .cornerRadius(10)
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .black))
+                }.padding(.vertical, 1)
             }
 
             VStack {

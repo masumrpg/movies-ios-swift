@@ -12,6 +12,8 @@ struct MoviesView: View {
     @ObservedObject var genresInteractor: GenresInteractor
     var genreId: Int
 
+    @State private var isLoading = false
+
     init(presenter: MoviesInteractor, genresInteractor: GenresInteractor, genreId: Int) {
         self.interactor = presenter
         self.genresInteractor = genresInteractor
@@ -24,34 +26,58 @@ struct MoviesView: View {
                 if interactor.movies.isEmpty {
                     Text("No Results")
                 } else {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack {
-                            ForEach(interactor.movies) { movie in
-                                NavigationLink {
-                                    MovieDetailModule.build(movieId: movie.id)
-                                } label: {
-                                    MoviesCardView(movieItem: movie)
+                    LazyVStack {
+                        ForEach(interactor.movies) { movie in
+                            NavigationLink {
+                                MovieDetailModule.build(movieId: movie.id)
+                            } label: {
+                                MoviesCardView(movieItem: movie)
+                                    .padding(.vertical, 1)
+                                    .shadow(color: Color.black.opacity(0.4), radius: 4, x: 5, y: 5)
+                            }
+                            .onAppear {
+                                if interactor.movies.last == movie {
+                                    loadNextPageIfNeeded()
                                 }
                             }
                         }
-                        .padding(.horizontal)
+
+                        if isLoading {
+                            ProgressView()
+                                .padding(.vertical)
+                        }
                     }
+                    .padding(.horizontal)
                 }
             }
             .background(Color.white)
+            .onAppear {
+                genresInteractor.loadGenres()
+                if interactor.movies.isEmpty {
+                    interactor.loadMovies()
+                }
+            }
         }
         .navigationTitle(navigationTitle)
-        .onAppear {
-            interactor.loadTrending()
-            genresInteractor.loadGenres()
-        }
     }
 
     private var navigationTitle: String {
-        if let genreName = genresInteractor.findGenreById(genreId: genreId, genres: genresInteractor.genres) {
-            return genreName
+        if !genresInteractor.genres.isEmpty {
+            if let genreName = genresInteractor.findGenreById(genreId: genreId, genres: genresInteractor.genres) {
+                return genreName
+            } else {
+                return "Genre Not Found"
+            }
         } else {
-            return "..."
+            return "Loading..."
+        }
+    }
+
+    private func loadNextPageIfNeeded() {
+        guard !isLoading else { return }
+        isLoading = true
+        interactor.loadNextPage {
+            isLoading = false
         }
     }
 }

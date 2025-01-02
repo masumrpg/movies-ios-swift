@@ -9,11 +9,18 @@ import Foundation
 
 class MoviesInteractor: ObservableObject {
 
+    @Published var moviesPage: MoviesPage = MoviesPage(
+        page: 1,
+        results: [],
+        totalPages: 0,
+        totalResults: 0
+    )
     @Published var movies: [Movie] = []
     
     private let apiKey: String
     private let baseUrl: String
     private let genreId: Int
+    var currentPage: Int = 1
     
     init(baseUrl: String, apiKey: String, genreId: Int) {
         self.baseUrl = baseUrl
@@ -21,18 +28,47 @@ class MoviesInteractor: ObservableObject {
         self.genreId = genreId
     }
 
-    func loadTrending() {
+    func loadMovies() {
         Task {
-            let url = URL(string: "\(baseUrl)/discover/movie?with_genres=\(genreId)&page=1&api_key=\(apiKey)")!
+            let url = URL(string: "\(baseUrl)/discover/movie?with_genres=\(genreId)&page=\(currentPage)&api_key=\(apiKey)")!
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
-                let movies = try JSONDecoder().decode(MoviesPageResponse.self, from: data)
-           
-                                DispatchQueue.main.async {
-                                    self.movies = movies.results
-                                }
+                let movies = try JSONDecoder().decode(MoviesPage.self, from: data)
+                
+                DispatchQueue.main.async {
+                    self.moviesPage = movies
+                    self.movies = movies.results
+                }
+                
+                currentPage += 1
             } catch {
                 print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func loadNextPage(completion: @escaping () -> Void) {
+        guard currentPage <= moviesPage.totalPages else {
+            completion()
+            return
+        }
+        
+        Task {
+            let url = URL(string: "\(baseUrl)/discover/movie?with_genres=\(genreId)&page=\(currentPage + 1)&api_key=\(apiKey)")!
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                let movies = try JSONDecoder().decode(MoviesPage.self, from: data)
+                
+                DispatchQueue.main.async {
+                    self.moviesPage = movies
+                    self.movies.append(contentsOf: movies.results)
+                    self.currentPage += 1
+                }
+                
+                completion()
+            } catch {
+                print(error.localizedDescription)
+                completion()
             }
         }
     }
