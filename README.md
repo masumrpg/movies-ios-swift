@@ -11,7 +11,7 @@ A SwiftUI-based movie application developed using the VIPER architecture. This p
 - **Language**: Swift  
 - **Framework**: SwiftUI  
 - **Architecture**: VIPER  
-- **Minimum iOS Version**: iOS 16  
+- **Target iOS Version**: iOS 16  
 - **IDE**: Xcode 14.1  
 
 ## Installation  
@@ -28,7 +28,7 @@ A SwiftUI-based movie application developed using the VIPER architecture. This p
 
 3. Open the project in Xcode 14.1:  
    ```bash  
-   open Movies.xcodeproj  
+   open MoviesApp.xcodeproj  
    ```  
 
 4. Select your desired simulator or device and hit **Run**.  
