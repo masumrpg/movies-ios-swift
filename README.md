@@ -2,19 +2,19 @@
 
 A SwiftUI-based movie application developed using the VIPER architecture. This project is built for Xcode 14.1 and targets iOS 16.  
 
-## ðŸš€ Features  
+## Features  
 - Browse popular movies.
 - View detailed information about selected movies.  
 - User-friendly and responsive interface.  
 
-## ðŸ› ï¸ Tech Stack  
+## Tech Stack  
 - **Language**: Swift  
 - **Framework**: SwiftUI  
 - **Architecture**: VIPER  
 - **Minimum iOS Version**: iOS 16  
 - **IDE**: Xcode 14.1  
 
-## ðŸ“¦ Installation  
+## Installation  
 
 1. Clone the repository:  
    ```bash  
@@ -33,7 +33,7 @@ A SwiftUI-based movie application developed using the VIPER architecture. This p
 
 4. Select your desired simulator or device and hit **Run**.  
 
-## ðŸ§© Project Structure  
+## Project Structure  
 
 The application follows the VIPER architecture, ensuring a clean separation of concerns:  
 - **View**: Handles UI and user interactions.  
